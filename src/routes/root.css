@@ -1,0 +1,44 @@
+.container {
+  padding: 7px 10px;
+}
+
+.nav {
+  width: 100%;
+  border: 1px solid red;
+}
+
+.menu {
+  display: flex;
+  direction: row;
+  gap: 10%;
+}
+
+ul {
+  list-style-type: none;
+}
+
+ul:hover {
+  cursor: pointer;
+}
+
+.outlet-container {
+  margin-top: 5%;
+}
+
+
+.mp-container {
+    display: flex;
+    flex-direction: row;
+    gap: 5%;
+}
+
+.timer-container {
+  margin-top: 2%;
+  border: 1px solid red;
+}
+
+.btn-grp {
+  display: flex;
+  flex-direction: row;
+  gap: 5%;
+}
