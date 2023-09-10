@@ -4,7 +4,6 @@
 
 .nav {
   width: 100%;
-  border: 1px solid red;
 }
 
 .menu {
@@ -34,7 +33,6 @@ ul:hover {
 
 .timer-container {
   margin-top: 2%;
-  border: 1px solid red;
 }
 
 .btn-grp {

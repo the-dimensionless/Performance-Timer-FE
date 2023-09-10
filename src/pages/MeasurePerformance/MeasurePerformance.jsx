@@ -1,21 +1,31 @@
 import {
   Box,
   Button,
+  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
+  Snackbar,
 } from "@mui/material";
 import { useRef, useState } from "react";
 import "../../routes/root.css";
 import { distanceTypes, eventTypes, formatTime } from "../../utils";
-import { saveData } from "../";
+import { saveData } from "../../service/client";
 
 const MeasurePerformance = () => {
   const [event, setEvent] = useState("");
   const [distance, setDistance] = useState("");
   const [countDown, setCountDown] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [showLoader, setShowLoader] = useState(false);
+  const [state, setState] = useState({
+    open: false,
+    vertical: "top",
+    horizontal: "right",
+    msg: "",
+  });
+  const { vertical, horizontal, open, msg } = state;
   const timerRef = useRef(null);
 
   const distanceDropdowns = distanceTypes[event]?.values;
@@ -27,7 +37,7 @@ const MeasurePerformance = () => {
     }, 1000);
   };
 
-  const changeTimer = (operation) => {
+  const changeTimer = (operation, load = false) => {
     switch (operation) {
       case "Pause":
         clearInterval(timerRef.current);
@@ -47,6 +57,8 @@ const MeasurePerformance = () => {
         setCountDown(0);
         break;
     }
+
+    if (load) setShowLoader(true);
   };
 
   const onBtnClick = () => {
@@ -63,8 +75,19 @@ const MeasurePerformance = () => {
     changeTimer(operation);
   };
 
+  const showSnack = (msg) => setState({ ...state, open: true, msg: msg });
+
   return (
     <>
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        autoHideDuration={3000}
+        open={open}
+        onClose={() => setState({ ...state, open: false })}
+        message={msg}
+        key={vertical + horizontal}
+      />
+
       <div className="mp-container">
         <Box sx={{ width: 200 }}>
           <FormControl fullWidth>
@@ -126,17 +149,28 @@ const MeasurePerformance = () => {
           >
             Reset
           </Button>
-          <Button
-            variant="contained"
-            disabled={countDown === 0}
-            onClick={() => {
-              changeTimer("Pause");
-              fetchAll
-              // call api
-            }}
-          >
-            Save Record
-          </Button>
+          {showLoader ? (
+            <CircularProgress />
+          ) : (
+            <Button
+              variant="contained"
+              disabled={countDown === 0}
+              onClick={() => {
+                changeTimer("Pause", true);
+                saveData(event, distance, unit, timerRef.current)
+                  .then((res) => {
+                    showSnack("Saved Successfully!");
+                  })
+                  .catch((err) => {
+                    console.log(err.message);
+                    showSnack(`Error saving data!: ${err.message}`);
+                  })
+                  .finally(() => setShowLoader(false));
+              }}
+            >
+              Save Record
+            </Button>
+          )}
         </div>
       </div>
     </>

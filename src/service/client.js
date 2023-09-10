@@ -9,9 +9,13 @@ export const fetchAll = async () => {
     });
 };
 
-export const saveData = async (payload) => {
-  return httpClient
-    .post("/event/save", payload)
-    .then((res) => res.data)
-    .catch((err) => console.log("Error saving data !", err));
+export const saveData = async (event, distance, unit, time) => {
+  const payload = {
+    eventType: event,
+    distance,
+    unit,
+    time,
+    createdAt: new Date().toISOString(),
+  };
+  return httpClient.post("/event/save", payload);
 };
