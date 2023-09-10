@@ -99,6 +99,7 @@ const MeasurePerformance = () => {
               label="Events:"
               onChange={(e) => {
                 setEvent(e.target.value);
+                changeTimer("Event Changed");
               }}
             >
               {eventTypes?.map((event, index) => (
@@ -119,7 +120,10 @@ const MeasurePerformance = () => {
               value={distance}
               disabled={event === ""}
               label="Distance:"
-              onChange={(e) => setDistance(e.target.value)}
+              onChange={(e) => {
+                setDistance(e.target.value);
+                changeTimer("Distance Changed");
+              }}
             >
               {distanceDropdowns?.map((i) => (
                 <MenuItem key={i} value={i}>

@@ -19,9 +19,9 @@ const ShowPerformance = () => {
   useEffect(() => {
     setShowLoader(true);
     fetchAll()
-      .then((data) => {
+      .then((res) => {
         // console.log("Show Performance Mounted", data);
-        setMap(data);
+        setMap(res.data);
       })
       .catch((err) => showSnack(`Error fetching data! ${err.message}`))
       .finally(() => setShowLoader(false));
