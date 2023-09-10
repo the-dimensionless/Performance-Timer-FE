@@ -1,12 +1,7 @@
 import { httpClient } from "../utils";
 
 export const fetchAll = async () => {
-  return httpClient
-    .get("/event/allEvents")
-    .then((res) => res.data)
-    .catch((err) => {
-      console.log("Error fetching data !", err);
-    });
+  return httpClient.get("/event/allEvents");
 };
 
 export const saveData = async (event, distance, unit, time) => {
