@@ -9,6 +9,32 @@ export const formatTime = (timer) => {
   return `${getHours} : ${getMinutes} : ${getSeconds}`;
 };
 
+export const getTSFormat = (ts) => {
+  const d = new Date(ts);
+  return d.toLocaleDateString() + " " + d.toLocaleTimeString();
+};
+
 export const httpClient = axios.create({
-  baseURL: import.meta.env.VITE_APP_BASE_URL
+  baseURL: import.meta.env.VITE_APP_BASE_URL,
 });
+
+export const eventTypes = ["Running", "Cycling", "Swimming"];
+export const distanceTypes = {
+  Running: {
+    values: [1, 2, 3, 4, 5],
+    unit: "Km",
+  },
+  Cycling: {
+    values: [1, 2, 3, 4, 5],
+    unit: "Km",
+  },
+  Swimming: {
+    values: [100, 200, 300, 400],
+    unit: "m",
+  },
+};
+export const initialMapState = {
+  Running: [],
+  Cycling: [],
+  Swimming: [],
+};

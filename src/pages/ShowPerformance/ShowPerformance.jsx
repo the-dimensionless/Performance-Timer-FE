@@ -1,22 +1,26 @@
+import { useEffect, useState } from "react";
 import TableComponent from "../../component/TableComponent";
+import { fetchAll } from "../../service/client";
+import { initialMapState } from "../../utils";
 
 const ShowPerformance = () => {
-    const ob = {
-        "Running": [1, 2, 3, 4, 5],
-        "Cycling": [],
-        "Swimming": []
-    }
+  const [map, setMap] = useState(initialMapState);
+  const keys = Object.keys(map);
 
-    
+  useEffect(() => {
+    fetchAll().then((data) => {
+      // console.log("Show Performance Mounted", data);
+      setMap(() => data);
+    });
+  }, []);
 
-    return (
-       <>
-       <TableComponent eventType={"Running"} />
-       <TableComponent eventType={"Cycling"} />
-       <TableComponent eventType={"Swimming"} />
-   
-       </>
-    )
+  return (
+    <>
+      {keys.map((key, index) => (
+        <TableComponent key={index} eventType={key} data={map[key]} />
+      ))}
+    </>
+  );
 };
 
 export default ShowPerformance;

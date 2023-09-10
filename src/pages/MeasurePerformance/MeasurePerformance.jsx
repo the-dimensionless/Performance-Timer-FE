@@ -8,33 +8,60 @@ import {
 } from "@mui/material";
 import { useRef, useState } from "react";
 import "../../routes/root.css";
-import { formatTime } from "../../utils";
-
-const eventTypes = ["Running", "Cycling", "Swimming"];
-const distanceTypes = {
-  Running: {
-    values: [1, 2, 3, 4, 5],
-    unit: "Km",
-  },
-  Cycling: {
-    values: [1, 2, 3, 4, 5],
-    unit: "Km",
-  },
-  Swimming: {
-    values: [100, 200, 300, 400],
-    unit: "m",
-  },
-};
+import { distanceTypes, eventTypes, formatTime } from "../../utils";
+import { saveData } from "../";
 
 const MeasurePerformance = () => {
-  const [event, setEvent] = useState('');
-  const [distance, setDistance] = useState('');
+  const [event, setEvent] = useState("");
+  const [distance, setDistance] = useState("");
   const [countDown, setCountDown] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const timerRef = useRef(null);
 
   const distanceDropdowns = distanceTypes[event]?.values;
   const unit = distanceTypes[event]?.unit;
+
+  const triggerTimer = () => {
+    timerRef.current = setInterval(() => {
+      setCountDown((countDown) => countDown + 1);
+    }, 1000);
+  };
+
+  const changeTimer = (operation) => {
+    switch (operation) {
+      case "Pause":
+        clearInterval(timerRef.current);
+        setIsPaused(true);
+        break;
+
+      case "Resume":
+        setIsPaused(false);
+
+      // eslint-disable-next-line no-fallthrough
+      case "Start":
+        triggerTimer();
+        break;
+
+      default:
+        clearInterval(timerRef.current);
+        setCountDown(0);
+        break;
+    }
+  };
+
+  const onBtnClick = () => {
+    let operation = "";
+    if (countDown === 0) {
+      operation = "Start";
+    } else if (isPaused) {
+      // resume
+      operation = "Resume";
+    } else {
+      // pause
+      operation = "Pause";
+    }
+    changeTimer(operation);
+  };
 
   return (
     <>
@@ -61,13 +88,13 @@ const MeasurePerformance = () => {
         </Box>
 
         <Box sx={{ width: 200 }}>
-          <FormControl fullWidth disabled={event === ''}>
+          <FormControl fullWidth disabled={event === ""}>
             <InputLabel id="select-distance">Distance:</InputLabel>
             <Select
               labelId="select-distance"
               id="select-distance"
               value={distance}
-              disabled={event === ''}
+              disabled={event === ""}
               label="Distance:"
               onChange={(e) => setDistance(e.target.value)}
             >
@@ -87,34 +114,15 @@ const MeasurePerformance = () => {
         <div className="btn-grp">
           <Button
             variant="outlined"
-            disabled={event === '' || distance === ''}
-            onClick={() => {
-              if (countDown === 0) {
-                timerRef.current = setInterval(() => {
-                  setCountDown((countDown) => countDown + 1);
-                }, 1000);
-              } else if (isPaused) {
-                // resume
-                timerRef.current = setInterval(() => {
-                    setCountDown((countDown) => countDown + 1);
-                  }, 1000);
-                setIsPaused(false);
-              } else {
-                // pause
-                clearInterval(timerRef.current);
-                setIsPaused(true);
-              }
-            }}
+            disabled={event === "" || distance === ""}
+            onClick={onBtnClick}
           >
             {countDown === 0 ? "Start" : isPaused ? "Resume" : "Pause"}
           </Button>
           <Button
             variant="outlined"
             disabled={countDown === 0}
-            onClick={() => {
-              clearInterval(timerRef.current);
-              setCountDown(0);
-            }}
+            onClick={() => changeTimer("Reset")}
           >
             Reset
           </Button>
@@ -122,9 +130,9 @@ const MeasurePerformance = () => {
             variant="contained"
             disabled={countDown === 0}
             onClick={() => {
-                clearInterval(timerRef.current);
-                setIsPaused(true);
-                // call api
+              changeTimer("Pause");
+              fetchAll
+              // call api
             }}
           >
             Save Record
